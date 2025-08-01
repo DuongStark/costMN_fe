@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://costmn-be.onrender.com'
+const API_BASE_URL = 'https://costmn-be.onrender.com/api'
 
 export interface Transaction {
   _id: string
