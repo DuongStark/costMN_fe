@@ -1,25 +1,24 @@
-import React from "react"
-import { Home, BarChart2, Settings, List, ChevronRight } from "lucide-react"
+import { ReactNode } from "react"
+import { Home, List, PiggyBank, History } from "lucide-react"
 
 export type MenuItem = {
   label: string
   path: string
-  icon: React.ReactNode
+  icon: ReactNode
   // Optional children for submenus
   children?: MenuItem[]
 }
 
 export const menuItems: MenuItem[] = [
-  { label: "Dashboard", path: "/dashboard", icon: <Home size={16} /> },
-  { label: "Analytics", path: "/analytics", icon: <BarChart2 size={16} /> },
-  { label: "Settings", path: "/settings", icon: <Settings size={16} /> },
-  {
-    label: "Menu1",
-    path: "/menu1",
-    icon: <List size={16} />,
+  { label: "Thống kê", path: "/dashboard", icon: <Home size={16} /> },
+  { label: "Lịch sử giao dịch", path: "/transactions", icon: <List size={16} /> },
+  { 
+    label: "Ngân sách hũ", 
+    path: "/budget", 
+    icon: <PiggyBank size={16} />,
     children: [
-      { label: "Submenu1", path: "/menu1/submenu1", icon: <ChevronRight size={16} /> },
-      { label: "Submenu2", path: "/menu1/submenu2", icon: <ChevronRight size={16} /> },
-    ],
+      { label: "Quản lý ngân sách", path: "/budget", icon: <PiggyBank size={16} /> },
+      { label: "Lịch sử ngân sách", path: "/budget/history", icon: <History size={16} /> }
+    ]
   },
 ]

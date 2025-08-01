@@ -1,8 +1,12 @@
-import type React from "react"
+import { Fragment } from "react"
 import { useLocation, Link } from "react-router-dom"
-import { ChevronRight, Home } from "lucide-react"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { menuItems } from "@/config/menu"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { LogOut, User, Settings } from "lucide-react"
+import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "sonner"
 
 interface BreadcrumbItem {
   label: string
@@ -12,105 +16,120 @@ interface BreadcrumbItem {
 
 export function BreadcrumbHeader() {
   const location = useLocation()
+  const { user, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    toast.success('Đăng xuất thành công!')
+  }
+
+  const generateBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
+    const segments = pathname.split('/').filter(Boolean)
+    const breadcrumbs: BreadcrumbItem[] = []
+    
+    let currentPath = ''
+    
+    segments.forEach((segment, index) => {
+      currentPath += `/${segment}`
+      
+      const menuItem = findMenuItemByPath(currentPath)
+      if (menuItem) {
+        breadcrumbs.push({
+          label: menuItem.label,
+          path: currentPath,
+          icon: menuItem.icon
+        })
+      } else {
+        // If not found in menu, format the segment
+        breadcrumbs.push({
+          label: formatBreadcrumbLabel(segment),
+          path: currentPath
+        })
+      }
+    })
+    
+    return breadcrumbs
+  }
+
   const breadcrumbs = generateBreadcrumbs(location.pathname)
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center bg-background px-4 lg:px-6">
-      <div className="flex h-full items-center gap-3">
-        <SidebarTrigger />
-        <div data-orientation="vertical" className="shrink-0 bg-border w-[1px] h-4"></div>
-
-        <nav className="flex items-center text-sm">
-          <ol className="flex items-center gap-1">
-            <li>
-              <Link
-                to="/"
-                className="flex h-9 items-center gap-1.5 rounded-md px-2 text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <Home className="h-4 w-4" />
-                <span className="sr-only sm:not-sr-only sm:inline">Home</span>
-              </Link>
-            </li>
-
+    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-white border-b border-gray-200 shadow-sm">
+      <div className="flex items-center gap-2 px-4">
+        <Breadcrumb>
+          <BreadcrumbList>
             {breadcrumbs.map((item, index) => (
-              <li key={item.path} className="flex items-center gap-1">
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                {index === breadcrumbs.length - 1 ? (
-                  <span className="flex h-9 items-center gap-1.5 rounded-md px-2 font-medium text-foreground">
-                    {item.icon}
-                    {item.label}
-                  </span>
-                ) : (
-                  <Link
-                    to={item.path}
-                    className="flex h-9 items-center gap-1.5 rounded-md px-2 text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {item.icon}
-                    <span className="hidden md:inline">{item.label}</span>
-                  </Link>
-                )}
-              </li>
+              <Fragment key={item.path}>
+                <BreadcrumbItem>
+                  {index === breadcrumbs.length - 1 ? (
+                    <BreadcrumbPage className="text-gray-800 font-medium">{item.label}</BreadcrumbPage>
+                  ) : (
+                    <BreadcrumbLink asChild>
+                      <Link to={item.path} className="text-gray-600 hover:text-gray-800 transition-colors">{item.label}</Link>
+                    </BreadcrumbLink>
+                  )}
+                </BreadcrumbItem>
+                {index < breadcrumbs.length - 1 && <BreadcrumbSeparator className="text-gray-400" />}
+              </Fragment>
             ))}
-          </ol>
-        </nav>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+      <div className="ml-auto flex items-center gap-2 px-4">
+        {/* User Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={user?.avatar} alt={user?.fullName} />
+                <AvatarFallback className="bg-gradient-to-br from-purple-100 to-pink-100 text-purple-700 border border-purple-200">
+                  {user?.fullName?.charAt(0)?.toUpperCase() || user?.username?.charAt(0)?.toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-white border-gray-200 shadow-lg" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none text-gray-800">{user?.fullName}</p>
+                <p className="text-xs leading-none text-gray-600">
+                  {user?.email}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-gray-200" />
+            <DropdownMenuItem className="text-gray-700 hover:bg-gray-50 hover:text-gray-800">
+              <User className="mr-2 h-4 w-4" />
+              <span>Hồ sơ</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="text-gray-700 hover:bg-gray-50 hover:text-gray-800">
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Cài đặt</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-gray-200" />
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 hover:bg-red-50 hover:text-red-700">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Đăng xuất</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )
 }
 
-function generateBreadcrumbs(pathname: string): BreadcrumbItem[] {
-  // Split the pathname into segments
-  const paths = pathname.split("/").filter(Boolean)
-  if (paths.length === 0) return []
-
-  const breadcrumbs: BreadcrumbItem[] = []
-  let currentPath = ""
-  
-  // Lưu trữ đường dẫn đã xử lý để tránh lặp lại item
-  const processedPaths = new Set<string>()
-
-  paths.forEach((segment) => {
-    currentPath += `/${segment}`
-    
-    // Bỏ qua nếu đường dẫn này đã được xử lý
-    if (processedPaths.has(currentPath)) {
-      return
-    }
-    
-    // Đánh dấu đường dẫn đã được xử lý
-    processedPaths.add(currentPath)
-
-    // Find matching menu item
-    const menuItem = findMenuItemByPath(currentPath)
-    if (menuItem) {
-      // Nếu đây là menu cha có children, thêm vào với đúng đường dẫn của nó
-      // mà không tự động chuyển hướng đến submenu đầu tiên
-      breadcrumbs.push({
-        label: menuItem.label,
-        path: menuItem.path,
-        icon: menuItem.icon,
-      })
-    } else {
-      // For paths not defined in the menu, create a formatted label.
-      breadcrumbs.push({
-        label: formatBreadcrumbLabel(segment),
-        path: currentPath,
-      })
-    }
-  })
-
-  return breadcrumbs
-}
-
 function findMenuItemByPath(path: string) {
-  // Search through the menu items for a matching path.
-  return menuItems.find((item) => item.path === path)
+  const menuItems = [
+    { label: "Trang chủ", path: "/dashboard", icon: null },
+    { label: "Lịch sử giao dịch", path: "/transactions", icon: null },
+  ]
+  
+  return menuItems.find(item => item.path === path)
 }
 
 function formatBreadcrumbLabel(segment: string): string {
-  // Convert kebab-case or camelCase to Title Case with spaces.
+  // Convert kebab-case or snake_case to Title Case
   return segment
-    .replace(/-/g, " ")
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/\b\w/g, (char) => char.toUpperCase())
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase())
 }

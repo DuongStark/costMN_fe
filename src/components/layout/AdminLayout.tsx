@@ -1,21 +1,18 @@
 import { Outlet } from "react-router-dom"
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AdminSidebar } from "./Sidebar"
 import { BreadcrumbHeader } from "./Header"
 
 export function AdminLayout() {
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AdminSidebar />
-        <SidebarInset className="flex w-full flex-1 flex-col">
-          <BreadcrumbHeader />
-          <main className="flex-1 w-full p-4 md:p-6">
-            <Outlet />
-          </main>
-        </SidebarInset>
+    <div className="flex h-screen bg-gray-50">
+      <AdminSidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <BreadcrumbHeader />
+        <main className="flex-1 overflow-y-auto bg-gray-50">
+          <Outlet />
+        </main>
       </div>
-    </SidebarProvider>
+    </div>
   )
 }
 
