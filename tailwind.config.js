@@ -154,39 +154,71 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Pastel colors
+        // Professional Feminine Color Palette - Designer Quality
         pastel: {
+          rose: {
+            light: "hsl(350, 80%, 92%)",
+            DEFAULT: "hsl(350, 75%, 75%)",
+            dark: "hsl(350, 70%, 65%)",
+          },
           pink: {
             light: "hsl(330, 85%, 90%)",
-            DEFAULT: "hsl(330, 85%, 70%)",
-            dark: "hsl(330, 85%, 60%)",
-          },
-          yellow: {
-            light: "hsl(45, 90%, 90%)",
-            DEFAULT: "hsl(45, 90%, 75%)",
-            dark: "hsl(45, 90%, 65%)",
+            DEFAULT: "hsl(330, 80%, 70%)",
+            dark: "hsl(330, 75%, 60%)",
           },
           purple: {
-            light: "hsl(280, 70%, 90%)",
-            DEFAULT: "hsl(280, 70%, 80%)",
-            dark: "hsl(280, 70%, 70%)",
-          },
-          mint: {
-            light: "hsl(150, 60%, 90%)",
-            DEFAULT: "hsl(150, 60%, 80%)",
-            dark: "hsl(150, 60%, 70%)",
-          },
-          peach: {
-            light: "hsl(20, 80%, 90%)",
-            DEFAULT: "hsl(20, 80%, 80%)",
-            dark: "hsl(20, 80%, 70%)",
+            light: "hsl(280, 75%, 88%)",
+            DEFAULT: "hsl(280, 70%, 68%)",
+            dark: "hsl(280, 65%, 58%)",
           },
           lavender: {
-            light: "hsl(260, 60%, 90%)",
-            DEFAULT: "hsl(260, 60%, 80%)",
-            dark: "hsl(260, 60%, 70%)",
+            light: "hsl(260, 70%, 90%)",
+            DEFAULT: "hsl(260, 65%, 72%)",
+            dark: "hsl(260, 60%, 62%)",
+          },
+          blue: {
+            light: "hsl(220, 75%, 88%)",
+            DEFAULT: "hsl(220, 70%, 68%)",
+            dark: "hsl(220, 65%, 58%)",
+          },
+          cyan: {
+            light: "hsl(190, 80%, 88%)",
+            DEFAULT: "hsl(190, 75%, 68%)",
+            dark: "hsl(190, 70%, 58%)",
+          },
+          mint: {
+            light: "hsl(160, 65%, 88%)",
+            DEFAULT: "hsl(160, 60%, 68%)",
+            dark: "hsl(160, 55%, 58%)",
+          },
+          sage: {
+            light: "hsl(140, 55%, 88%)",
+            DEFAULT: "hsl(140, 50%, 68%)",
+            dark: "hsl(140, 45%, 58%)",
+          },
+          yellow: {
+            light: "hsl(50, 90%, 88%)",
+            DEFAULT: "hsl(50, 85%, 68%)",
+            dark: "hsl(50, 80%, 58%)",
+          },
+          peach: {
+            light: "hsl(25, 85%, 88%)",
+            DEFAULT: "hsl(25, 80%, 68%)",
+            dark: "hsl(25, 75%, 58%)",
+          },
+          coral: {
+            light: "hsl(15, 80%, 88%)",
+            DEFAULT: "hsl(15, 75%, 68%)",
+            dark: "hsl(15, 70%, 58%)",
           },
         },
+        // Sophisticated Gradient Colors
+        gradient: {
+          primary: "linear-gradient(135deg, hsl(330, 75%, 70%) 0%, hsl(320, 70%, 65%) 50%, hsl(310, 65%, 75%) 100%)",
+          secondary: "linear-gradient(135deg, hsl(50, 85%, 78%) 0%, hsl(280, 60%, 85%) 50%, hsl(220, 65%, 80%) 100%)",
+          feminine: "linear-gradient(135deg, hsl(350, 70%, 88%) 0%, hsl(330, 65%, 85%) 25%, hsl(280, 55%, 88%) 50%, hsl(260, 50%, 90%) 75%, hsl(220, 60%, 88%) 100%)",
+          card: "linear-gradient(135deg, hsl(340, 60%, 97%) 0%, hsl(320, 50%, 96%) 30%, hsl(280, 45%, 97%) 70%, hsl(260, 40%, 98%) 100%)",
+        }
       },
       borderRadius: {
         lg: "var(--radius)",

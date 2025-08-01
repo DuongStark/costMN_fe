@@ -1,10 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { type ThemeProviderProps } from "next-themes/dist/types"
+import { ThemeProvider as NextThemesProvider, ThemeProviderProps as NextThemeProviderProps } from "next-themes"
 
 type Theme = "dark" | "light" | "system"
+
+interface ThemeProviderProps extends NextThemeProviderProps {
+  children: React.ReactNode
+}
 
 type ThemeProviderState = {
   theme: Theme

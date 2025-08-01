@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { Plus, Edit, Trash2, TrendingUp, TrendingDown, Wallet, PiggyBank, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -169,7 +169,7 @@ export default function BudgetPage() {
         ]
       }
 
-      const budget = await api.createOrUpdateBudget(sampleBudget)
+      await api.createOrUpdateBudget(sampleBudget)
       toast.success('Đã tạo ngân sách mẫu thành công!')
       
       // Refresh data after creating sample budget
@@ -264,7 +264,7 @@ export default function BudgetPage() {
         return
       }
 
-      const budget = await api.createOrUpdateBudget({
+      await api.createOrUpdateBudget({
         month: currentMonth,
         year: currentYear,
         totalBudget: editingBudget.totalBudget,

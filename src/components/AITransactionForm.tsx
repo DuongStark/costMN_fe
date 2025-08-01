@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Bot, Upload, Send, Edit, Trash2, Check, X } from 'lucide-react'
 import { toast } from 'sonner'
@@ -175,7 +174,7 @@ export function AITransactionForm({ onSuccess, trigger }: AITransactionFormProps
     try {
       const savePromises = aiTransactions.map(transaction => 
         api.createTransaction({
-          date: transaction.date,
+          date: transaction.date || new Date().toISOString().split('T')[0],
           type: transaction.type,
           category: transaction.category,
           amount: transaction.amount,
@@ -430,13 +429,13 @@ export function AITransactionForm({ onSuccess, trigger }: AITransactionFormProps
                             {editingIndex === index ? (
                               <Input
                                 type="date"
-                                value={transaction.date}
+                                value={transaction.date || ''}
                                 onChange={(e) => handleUpdateTransaction(index, 'date', e.target.value)}
                                 className="text-sm"
                               />
                             ) : (
                               <span className="text-sm text-gray-900">
-                                {new Date(transaction.date).toLocaleDateString('vi-VN')}
+                                {transaction.date ? new Date(transaction.date).toLocaleDateString('vi-VN') : 'Chưa có ngày'}
                               </span>
                             )}
                           </div>
@@ -482,13 +481,13 @@ export function AITransactionForm({ onSuccess, trigger }: AITransactionFormProps
                           {editingIndex === index ? (
                             <Input
                               type="date"
-                              value={transaction.date}
+                              value={transaction.date || ''}
                               onChange={(e) => handleUpdateTransaction(index, 'date', e.target.value)}
                               className="min-w-[140px]"
                             />
                           ) : (
                             <span className="text-sm">
-                              {new Date(transaction.date).toLocaleDateString('vi-VN')}
+                              {transaction.date ? new Date(transaction.date).toLocaleDateString('vi-VN') : 'Chưa có ngày'}
                             </span>
                           )}
                         </TableCell>

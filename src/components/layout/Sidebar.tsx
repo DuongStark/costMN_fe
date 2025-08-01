@@ -25,10 +25,10 @@ export function AdminSidebar() {
       <li key={item.path}>
         <div
           className={cn(
-            "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors cursor-pointer",
+            "flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 cursor-pointer transform hover:scale-105",
             isActive
-              ? "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border border-purple-200 shadow-sm"
-              : "text-gray-700 hover:bg-gray-50 hover:text-gray-800"
+              ? "bg-gradient-to-r from-pink-200 via-purple-200 to-rose-200 text-purple-800 border-2 border-purple-300 shadow-lg"
+              : "text-purple-700 hover:bg-gradient-to-r hover:from-pink-100 hover:to-purple-100 hover:text-purple-800 hover:shadow-md"
           )}
         >
           {hasChildren ? (
@@ -43,7 +43,7 @@ export function AdminSidebar() {
               </Link>
               <button
                 onClick={() => toggleExpanded(item.path)}
-                className="p-1 hover:bg-gray-200 rounded"
+                className="p-1 hover:bg-purple-200 rounded-lg transition-colors"
               >
                 {isExpanded ? (
                   <ChevronDown className="w-4 h-4" />
@@ -74,10 +74,10 @@ export function AdminSidebar() {
                   <Link
                     to={childItem.path}
                     className={cn(
-                      "flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors",
+                      "flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 transform hover:scale-105",
                       isChildActive
-                        ? "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 border border-purple-200 shadow-sm"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-700"
+                        ? "bg-gradient-to-r from-pink-200 via-purple-200 to-rose-200 text-purple-800 border-2 border-purple-300 shadow-lg"
+                        : "text-purple-600 hover:bg-gradient-to-r hover:from-pink-100 hover:to-purple-100 hover:text-purple-800 hover:shadow-md"
                     )}
                   >
                     <span className="w-4 h-4 mr-3" />
@@ -94,10 +94,10 @@ export function AdminSidebar() {
   }
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
+    <div className="w-64 bg-gradient-to-b from-rose-50 via-pink-50 via-purple-50 to-blue-50 border-r-2 border-purple-200 flex flex-col shadow-xl sidebar">
       {/* Logo */}
-      <div className="p-6 border-b border-gray-200">
-        <h1 className="text-xl font-bold text-gray-800">
+      <div className="p-6 border-b-2 border-purple-200 bg-gradient-to-r from-pink-100 to-purple-100">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
           Quản lý Chi tiêu
         </h1>
       </div>
@@ -110,9 +110,9 @@ export function AdminSidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="text-xs text-gray-500 text-center">
-          © 2024 Quản lý Chi tiêu
+      <div className="p-4 border-t-2 border-purple-200 bg-gradient-to-r from-pink-100 to-purple-100">
+        <div className="text-xs text-purple-600 text-center font-medium">
+          © 2025 Quản lý Chi tiêu
         </div>
       </div>
     </div>
