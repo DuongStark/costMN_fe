@@ -14,9 +14,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://costmn-be.onrender.com',
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
