@@ -20,4 +20,30 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    target: ['es2015', 'ios11'],
+    cssTarget: ['chrome61', 'safari13.1', 'ios11'],
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+        },
+      },
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        require('autoprefixer')({
+          overrideBrowserslist: [
+            '> 1%',
+            'last 2 versions',
+            'iOS >= 11',
+            'Safari >= 13.1',
+          ],
+        }),
+      ],
+    },
+  },
 })
