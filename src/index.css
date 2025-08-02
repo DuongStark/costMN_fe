@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@import "tailwindcss";
-
 @layer base {
   :root {
     /* Professional Feminine Design System - Vibrant yet Harmonious */
@@ -497,4 +495,19 @@ input::placeholder, textarea::placeholder {
     hsl(320, 65%, 70%) 50%,
     hsl(310, 60%, 75%) 100%);
   box-shadow: 0 4px 8px hsla(320, 30%, 50%, 0.15);
+}
+
+/* Mobile sidebar text hiding utilities */
+@layer utilities {
+  .sidebar-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+  }
+  
+  .sidebar-collapsed-text {
+    transition: all 0.3s ease-in-out;
+  }
 }

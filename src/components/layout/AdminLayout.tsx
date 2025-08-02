@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Outlet } from "react-router-dom"
 import { AdminSidebar } from "./Sidebar"
 import { BreadcrumbHeader } from "./Header"
@@ -10,22 +10,30 @@ export function AdminLayout() {
   const isMobile = useIsMobile()
   const isTablet = useIsTablet()
 
-  // Auto collapse on tablet
+  // Initial state based on device type
   useEffect(() => {
-    if (isTablet && !isMobile) {
+    if (isMobile) {
+      // Mobile: always closed by default
+      setSidebarOpen(false)
+      setSidebarCollapsed(false)
+    } else if (isTablet) {
+      // Tablet: open but collapsed
+      setSidebarOpen(true)
       setSidebarCollapsed(true)
-    } else if (!isTablet && !isMobile) {
+    } else {
+      // Desktop: open and expanded
+      setSidebarOpen(true)
       setSidebarCollapsed(false)
     }
-  }, [isTablet, isMobile])
+  }, [isMobile, isTablet])
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev)
+  }, [])
 
-  const toggleCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed)
-  }
+  const toggleCollapse = useCallback(() => {
+    setSidebarCollapsed(prev => !prev)
+  }, [])
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-blue-50">

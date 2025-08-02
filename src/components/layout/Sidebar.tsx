@@ -3,7 +3,7 @@ import { useState, useEffect } from "react"
 import { ChevronDown, ChevronRight, X, ChevronLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { menuItems, MenuItem } from "@/config/menu"
-import { useIsMobile, useIsTablet } from "@/hooks/use-mobile"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface AdminSidebarProps {
   isOpen?: boolean
@@ -12,25 +12,33 @@ interface AdminSidebarProps {
   onCollapse?: () => void
 }
 
-export function AdminSidebar({ isOpen = true, onToggle, isCollapsed = false, onCollapse }: AdminSidebarProps) {
+export function AdminSidebar({ 
+  isOpen = false, 
+  onToggle, 
+  isCollapsed = false, 
+  onCollapse 
+}: AdminSidebarProps) {
   const location = useLocation()
   const [expandedItems, setExpandedItems] = useState<string[]>([])
   const isMobile = useIsMobile()
-  const isTablet = useIsTablet()
 
-  // Auto collapse on tablet
+  // Mở menu item hiện tại khi component mount
   useEffect(() => {
-    if (isTablet && !isMobile && onCollapse) {
-      onCollapse()
+    const currentItem = menuItems.find(item => 
+      location.pathname.startsWith(item.path) ||
+      item.children?.some(sub => location.pathname.startsWith(sub.path))
+    )
+    if (currentItem && currentItem.children) {
+      setExpandedItems([currentItem.path])
     }
-  }, [isTablet, isMobile, onCollapse])
+  }, [location.pathname])
 
-  // Close sidebar on mobile when route changes
+  // Mobile: luôn đóng sidebar khi navigation
   useEffect(() => {
     if (isMobile && onToggle) {
       onToggle()
     }
-  }, [location.pathname, isMobile])
+  }, [location.pathname, isMobile, onToggle])
 
   const toggleExpanded = (path: string) => {
     setExpandedItems(prev => 
@@ -40,139 +48,131 @@ export function AdminSidebar({ isOpen = true, onToggle, isCollapsed = false, onC
     )
   }
 
-  const renderMenuItem = (item: MenuItem) => {
-    const isActive = location.pathname === item.path
+  const handleBackdropClick = () => {
+    if (isMobile && onToggle) {
+      onToggle()
+    }
+  }
+
+  const renderMenuItem = (item: MenuItem, level = 0) => {
     const isExpanded = expandedItems.includes(item.path)
-    const hasChildren = item.children && item.children.length > 0
+    const isActive = location.pathname === item.path
+    const hasSubmenu = item.children && item.children.length > 0
+    const isParentActive = item.children?.some(sub => location.pathname === sub.path)
 
     return (
-      <li key={item.path}>
-        <div
-          className={cn(
-            "flex items-center px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-300 cursor-pointer group hover:scale-105",
-            isActive
-              ? "bg-gradient-to-r from-pink-200 via-purple-200 to-rose-200 text-purple-800 border-2 border-purple-300 shadow-lg"
-              : "text-purple-700 hover:bg-gradient-to-r hover:from-pink-100 hover:to-purple-100 hover:text-purple-800 hover:shadow-md",
-            isCollapsed && !isMobile && "justify-center px-2"
-          )}
-        >
-          {hasChildren ? (
-            <>
-              <Link
-                to={item.path}
-                className={cn(
-                  "flex items-center flex-1",
-                  isCollapsed && !isMobile && "justify-center"
-                )}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="flex items-center min-w-0">
-                  {item.icon}
-                  {(!isCollapsed || isMobile) && <span className="ml-3 truncate">{item.label}</span>}
-                </div>
-              </Link>
-              {(!isCollapsed || isMobile) && (
-                <button
-                  onClick={() => toggleExpanded(item.path)}
-                  className="p-1 hover:bg-purple-200 rounded-lg transition-colors"
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="w-4 h-4" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4" />
-                  )}
-                </button>
-              )}
-            </>
-          ) : (
-            <Link
-              to={item.path}
-              className={cn(
-                "flex items-center w-full min-w-0",
-                isCollapsed && !isMobile && "justify-center"
-              )}
-              title={isCollapsed && !isMobile ? item.label : undefined}
-            >
-              <div className="flex items-center min-w-0">
+      <div key={item.path}>
+        {hasSubmenu ? (
+          <button
+            onClick={() => toggleExpanded(item.path)}
+            className={cn(
+              "w-full flex items-center justify-between p-3 rounded-lg transition-all duration-200",
+              "hover:bg-gray-100 focus:outline-none focus:bg-gray-100",
+              (isActive || isParentActive) && "bg-blue-50 text-blue-700 border-l-4 border-blue-500",
+              level > 0 && "ml-4 text-sm"
+            )}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
                 {item.icon}
-                {(!isCollapsed || isMobile) && <span className="ml-3 truncate">{item.label}</span>}
               </div>
-            </Link>
-          )}
-        </div>
+              <span className={cn(
+                "font-medium transition-all duration-300",
+                (isCollapsed && !isMobile) && "opacity-0 w-0 overflow-hidden",
+                "sidebar-collapsed-text"
+              )}>
+                {item.label}
+              </span>
+            </div>
+            <div className={cn(
+              "transition-all duration-300",
+              (isCollapsed && !isMobile) && "opacity-0 w-0 overflow-hidden",
+              "sidebar-collapsed-text"
+            )}>
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </div>
+          </button>
+        ) : (
+          <Link
+            to={item.path}
+            className={cn(
+              "flex items-center gap-3 p-3 rounded-lg transition-all duration-200",
+              "hover:bg-gray-100 focus:outline-none focus:bg-gray-100",
+              isActive && "bg-blue-50 text-blue-700 border-l-4 border-blue-500",
+              level > 0 && "ml-4 text-sm"
+            )}
+          >
+            <div className="w-5 h-5 flex-shrink-0 flex items-center justify-center">
+              {item.icon}
+            </div>
+            <span className={cn(
+              "font-medium transition-all duration-300",
+              (isCollapsed && !isMobile) && "opacity-0 w-0 overflow-hidden",
+              "sidebar-collapsed-text"
+            )}>
+              {item.label}
+            </span>
+          </Link>
+        )}
 
         {/* Submenu */}
-        {hasChildren && isExpanded && (!isCollapsed || isMobile) && (
-          <ul className="ml-4 mt-2 space-y-1">
-            {item.children?.map((childItem) => {
-              const isChildActive = location.pathname === childItem.path
-              
-              return (
-                <li key={childItem.path}>
-                  <Link
-                    to={childItem.path}
-                    className={cn(
-                      "flex items-center px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 transform hover:scale-105",
-                      isChildActive
-                        ? "bg-gradient-to-r from-pink-200 via-purple-200 to-rose-200 text-purple-800 border-2 border-purple-300 shadow-lg"
-                        : "text-purple-600 hover:bg-gradient-to-r hover:from-pink-100 hover:to-purple-100 hover:text-purple-800 hover:shadow-md"
-                    )}
-                  >
-                    <span className="w-4 h-4 mr-3" />
-                    {childItem.icon}
-                    <span className="ml-3 truncate">{childItem.label}</span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
+        {hasSubmenu && isExpanded && (
+          <div className={cn(
+            "ml-6 mt-1 space-y-1 transition-all duration-300",
+            (isCollapsed && !isMobile) && "opacity-0 w-0 overflow-hidden",
+            "sidebar-collapsed-text"
+          )}>
+            {item.children!.map(subItem => renderMenuItem(subItem, level + 1))}
+          </div>
         )}
-      </li>
+      </div>
     )
   }
 
+  // Mobile overlay backdrop
   if (isMobile) {
     return (
       <>
-        {/* Mobile Overlay */}
+        {/* Backdrop */}
         {isOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
-            onClick={onToggle}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+            onClick={handleBackdropClick}
           />
         )}
-        
+
         {/* Mobile Sidebar */}
-        <div className={cn(
-          "fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-rose-50 via-pink-50 via-purple-50 to-blue-50 border-r-2 border-purple-200 flex flex-col shadow-xl z-50 transform transition-transform duration-300 ease-in-out lg:hidden",
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        )}>
-          {/* Mobile Header with Close Button */}
-          <div className="flex items-center justify-between p-4 border-b-2 border-purple-200 bg-gradient-to-r from-pink-100 to-purple-100">
-            <h1 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              CostMN
-            </h1>
+        <div
+          className={cn(
+            "fixed left-0 top-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300",
+            "md:hidden",
+            isOpen ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">CM</span>
+              </div>
+              <span className="font-bold text-gray-900">Cost Management</span>
+            </div>
             <button
               onClick={onToggle}
-              className="p-2 hover:bg-purple-200 rounded-lg transition-colors"
+              className="p-1 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <X className="w-5 h-5 text-purple-600" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 overflow-y-auto">
-            <ul className="space-y-2">
-              {menuItems.map(renderMenuItem)}
-            </ul>
+          <nav className="p-4 space-y-2 overflow-y-auto">
+            {menuItems.map(item => renderMenuItem(item))}
           </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t-2 border-purple-200 bg-gradient-to-r from-pink-100 to-purple-100">
-            <div className="text-xs text-purple-600 text-center font-medium">
-              © 2025 CostMN
-            </div>
-          </div>
         </div>
       </>
     )
@@ -180,42 +180,63 @@ export function AdminSidebar({ isOpen = true, onToggle, isCollapsed = false, onC
 
   // Desktop Sidebar
   return (
-    <div className={cn(
-      "hidden lg:flex bg-gradient-to-b from-rose-50 via-pink-50 via-purple-50 to-blue-50 border-r-2 border-purple-200 flex-col shadow-xl sidebar transition-all duration-300 ease-in-out",
-      isCollapsed ? "w-16" : "w-64"
-    )}>
-      {/* Logo & Collapse Button */}
-      <div className="flex items-center justify-between p-4 border-b-2 border-purple-200 bg-gradient-to-r from-pink-100 to-purple-100">
-        {!isCollapsed && (
-          <h1 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            CostMN
-          </h1>
-        )}
+    <div
+      className={cn(
+        "hidden md:flex flex-col bg-white border-r border-gray-200 transition-all duration-300",
+        "sidebar",
+        isCollapsed ? "w-16" : "w-64"
+      )}
+    >
+      {/* Header */}
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        <div className={cn(
+          "flex items-center gap-3 transition-all duration-300",
+          isCollapsed && "justify-center"
+        )}>
+          <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-sm">CM</span>
+          </div>
+          <span className={cn(
+            "font-bold text-gray-900 transition-all duration-300",
+            isCollapsed && "opacity-0 w-0 overflow-hidden",
+            "sidebar-collapsed-text"
+          )}>
+            Cost Management
+          </span>
+        </div>
+        
+        {/* Collapse Button */}
         <button
           onClick={onCollapse}
-          className="p-2 hover:bg-purple-200 rounded-lg transition-colors ml-auto"
+          className={cn(
+            "p-1 rounded-lg hover:bg-gray-100 transition-all duration-300",
+            isCollapsed && "opacity-0 w-0 overflow-hidden",
+            "sidebar-collapsed-text"
+          )}
           title={isCollapsed ? "Mở rộng sidebar" : "Thu gọn sidebar"}
         >
           <ChevronLeft className={cn(
-            "w-4 h-4 text-purple-600 transition-transform duration-300",
+            "w-5 h-5 transition-transform duration-300",
             isCollapsed && "rotate-180"
           )} />
         </button>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-3 overflow-y-auto">
-        <ul className="space-y-1.5">
-          {menuItems.map(renderMenuItem)}
-        </ul>
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {menuItems.map(item => renderMenuItem(item))}
       </nav>
 
-      {/* Footer */}
-      {!isCollapsed && (
-        <div className="p-4 border-t-2 border-purple-200 bg-gradient-to-r from-pink-100 to-purple-100">
-          <div className="text-xs text-purple-600 text-center font-medium">
-            © 2025 CostMN
-          </div>
+      {/* Expand Button when collapsed */}
+      {isCollapsed && (
+        <div className="p-4 border-t border-gray-200">
+          <button
+            onClick={onCollapse}
+            className="w-full p-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center justify-center"
+            title="Mở rộng sidebar"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
       )}
     </div>
