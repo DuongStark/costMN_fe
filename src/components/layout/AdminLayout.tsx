@@ -31,17 +31,13 @@ export function AdminLayout() {
     setSidebarOpen(prev => !prev)
   }, [])
 
-  const toggleCollapse = useCallback(() => {
-    setSidebarCollapsed(prev => !prev)
-  }, [])
-
   return (
     <div className="flex h-screen bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-blue-50">
       <AdminSidebar 
         isOpen={sidebarOpen} 
         onToggle={toggleSidebar}
         isCollapsed={sidebarCollapsed}
-        onCollapse={toggleCollapse}
+        onSetCollapsed={setSidebarCollapsed}
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <BreadcrumbHeader onMenuToggle={toggleSidebar} />
