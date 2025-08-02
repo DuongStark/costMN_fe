@@ -86,25 +86,7 @@ export function AITransactionForm({ onSuccess, trigger }: AITransactionFormProps
 
     setLoading(true)
     try {
-      const formData = new FormData()
-      formData.append('text', text)
-      if (imageFile) {
-        formData.append('image', imageFile)
-      }
-
-      const response = await fetch('/api/ai/analyze-transaction', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: formData
-      })
-
-      if (!response.ok) {
-        throw new Error('Không thể phân tích dữ liệu')
-      }
-
-      const data = await response.json()
+      const data = await api.analyzeTransaction(text, imageFile)
       
       if (data.success && data.transactions) {
         // Logic xử lý ngày tháng cho AI transactions
@@ -144,7 +126,7 @@ export function AITransactionForm({ onSuccess, trigger }: AITransactionFormProps
       }
     } catch (error) {
       console.error('Error analyzing transaction:', error)
-      toast.error('Có lỗi xảy ra khi phân tích dữ liệu')
+      toast.error(error instanceof Error ? error.message : 'Có lỗi xảy ra khi phân tích dữ liệu')
     } finally {
       setLoading(false)
     }

@@ -639,4 +639,49 @@ export const api = {
       throw error
     }
   },
+
+  // AI Analysis API
+  async analyzeTransaction(text: string, imageFile?: File) {
+    try {
+      const formData = new FormData()
+      formData.append('text', text)
+      if (imageFile) {
+        formData.append('image', imageFile)
+      }
+
+      const response = await fetch(`${API_BASE_URL}/ai/analyze-transaction`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+          throw new Error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        }
+        if (response.status === 405) {
+          throw new Error('Tính năng AI chưa được hỗ trợ trên server này.')
+        }
+        throw new Error('Không thể phân tích dữ liệu')
+      }
+
+      const data = await response.json()
+      
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to analyze transaction')
+      }
+      
+      return data
+    } catch (error) {
+      console.error('AI Analysis Error:', error)
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        throw new Error('Không thể kết nối đến server. Vui lòng kiểm tra backend đã khởi động chưa.')
+      }
+      throw error
+    }
+  },
 } 
