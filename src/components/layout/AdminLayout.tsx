@@ -31,21 +31,20 @@ export function AdminLayout() {
   useEffect(() => {
     if (isMobile) {
       if (sidebarOpen) {
-        document.body.style.overflowX = 'hidden'
-        // Prevent body scroll when sidebar is open
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = 'hidden';
       } else {
-        document.body.style.overflowX = ''
-        document.body.style.overflow = ''
+        document.body.style.overflow = '';
       }
+    } else {
+      // Ensure the style is removed on non-mobile devices
+      document.body.style.overflow = '';
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.style.overflowX = ''
-      document.body.style.overflow = ''
-    }
-  }, [sidebarOpen, isMobile])
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen, isMobile]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev)
