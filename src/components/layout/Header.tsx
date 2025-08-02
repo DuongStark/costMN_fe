@@ -4,8 +4,9 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { LogOut, User, Settings } from "lucide-react"
+import { LogOut, User, Settings, Menu } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { toast } from "sonner"
 
 interface BreadcrumbItem {
@@ -14,9 +15,14 @@ interface BreadcrumbItem {
   icon?: React.ReactNode
 }
 
-export function BreadcrumbHeader() {
+interface BreadcrumbHeaderProps {
+  onMenuToggle?: () => void
+}
+
+export function BreadcrumbHeader({ onMenuToggle }: BreadcrumbHeaderProps) {
   const location = useLocation()
   const { user, logout } = useAuth()
+  const isMobile = useIsMobile()
 
   const handleLogout = () => {
     logout()
@@ -56,6 +62,18 @@ export function BreadcrumbHeader() {
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-gradient-to-r from-rose-50 via-pink-50 via-purple-50 to-blue-50 border-b-2 border-purple-200 shadow-lg backdrop-blur-sm">
       <div className="flex items-center gap-2 px-4">
+        {/* Mobile Menu Button */}
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onMenuToggle}
+            className="lg:hidden p-2 hover:bg-gradient-to-br hover:from-pink-100 hover:to-purple-100"
+          >
+            <Menu className="h-5 w-5 text-purple-600" />
+          </Button>
+        )}
+        
         <Breadcrumb>
           <BreadcrumbList>
             {breadcrumbs.map((item, index) => (

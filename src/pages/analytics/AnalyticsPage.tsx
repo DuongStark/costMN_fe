@@ -13,6 +13,7 @@ import { api } from '@/lib/api'
 import { toast } from 'sonner'
 import { TransactionForm } from '@/components/TransactionForm'
 import { AITransactionForm } from '@/components/AITransactionForm'
+import { cn } from '@/lib/utils'
 
 interface Transaction {
   _id: string
@@ -168,6 +169,11 @@ export default function TransactionsPage() {
     fetchTransactions()
   }
 
+  const handleViewTransaction = (transaction: Transaction) => {
+    setSelectedTransaction(transaction)
+    setShowTransactionDetails(true)
+  }
+
   useEffect(() => {
     fetchTransactions()
   }, [])
@@ -193,12 +199,12 @@ export default function TransactionsPage() {
     return MONTHS.find(month => month.value === currentMonth.toString())?.label || 'Tháng hiện tại'
   }
 
-  // Hàm để lấy màu nền cho hàng dựa trên loại giao dịch
-  const getRowBackgroundColor = (type: 'income' | 'expense') => {
-    if (type === 'income') {
-      return 'bg-green-100 hover:bg-green-200'
+  // Hàm để lấy class cho hàng dựa trên loại giao dịch
+  const getRowClass = (transaction: Transaction) => {
+    if (transaction.type === 'income') {
+      return 'border-l-green-500'
     } else {
-      return 'bg-red-100 hover:bg-red-200'
+      return 'border-l-red-500'
     }
   }
 
@@ -214,14 +220,14 @@ export default function TransactionsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Lịch sử giao dịch</h1>
-          <p className="text-gray-600 mt-1">Quản lý và theo dõi các giao dịch của bạn</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Lịch sử giao dịch</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">Quản lý và theo dõi các giao dịch của bạn</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <AITransactionForm
             onSuccess={handleTransactionSuccess}
           />
@@ -229,7 +235,7 @@ export default function TransactionsPage() {
             mode="add"
             onSuccess={handleTransactionSuccess}
             trigger={
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 Thêm giao dịch
               </Button>
@@ -240,19 +246,19 @@ export default function TransactionsPage() {
 
       {/* Filters */}
       <Card className="bg-white border border-gray-300 shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-gray-900">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-gray-900 text-lg">
             <Filter className="w-5 h-5" />
             Bộ lọc
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Month Filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Tháng</label>
               <Select value={filters.month} onValueChange={(value) => handleFilterChange('month', value)}>
-                <SelectTrigger className="bg-gray-100 border-gray-300">
+                <SelectTrigger className="bg-gray-50 border-gray-300 h-10">
                   <SelectValue placeholder={getCurrentMonthLabel()} />
                 </SelectTrigger>
                 <SelectContent>
@@ -269,7 +275,7 @@ export default function TransactionsPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Loại</label>
               <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
-                <SelectTrigger className="bg-gray-100 border-gray-300">
+                <SelectTrigger className="bg-gray-50 border-gray-300 h-10">
                   <SelectValue placeholder="Tất cả" />
                 </SelectTrigger>
                 <SelectContent>
@@ -284,7 +290,7 @@ export default function TransactionsPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Danh mục</label>
               <Select value={filters.category} onValueChange={(value) => handleFilterChange('category', value)}>
-                <SelectTrigger className="bg-gray-100 border-gray-300">
+                <SelectTrigger className="bg-gray-50 border-gray-300 h-10">
                   <SelectValue placeholder="Tất cả" />
                 </SelectTrigger>
                 <SelectContent>
@@ -307,7 +313,7 @@ export default function TransactionsPage() {
                   placeholder="Tìm kiếm..."
                   value={filters.keyword}
                   onChange={(e) => handleFilterChange('keyword', e.target.value)}
-                  className="pl-10 bg-gray-100 border-gray-300"
+                  className="pl-10 bg-gray-50 border-gray-300 h-10"
                 />
               </div>
             </div>
@@ -316,50 +322,50 @@ export default function TransactionsPage() {
       </Card>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-green-700">Tổng thu</p>
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-xl sm:text-2xl font-bold text-green-600 truncate">
                   {formatCurrency(summary.totalIncome)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center">
-                <span className="text-green-600 text-xl">+</span>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-200 rounded-full flex items-center justify-center ml-3">
+                <span className="text-green-600 text-lg sm:text-xl">+</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-red-700">Tổng chi</p>
-                <p className="text-2xl font-bold text-red-600">
+                <p className="text-xl sm:text-2xl font-bold text-red-600 truncate">
                   {formatCurrency(summary.totalExpense)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-200 rounded-full flex items-center justify-center">
-                <span className="text-red-600 text-xl">-</span>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-200 rounded-full flex items-center justify-center ml-3">
+                <span className="text-red-600 text-lg sm:text-xl">-</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-          <CardContent className="p-6">
+        <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200 sm:col-span-2 lg:col-span-1">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-blue-700">Chênh lệch</p>
-                <p className={`text-2xl font-bold ${summary.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`text-xl sm:text-2xl font-bold truncate ${summary.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {formatCurrency(summary.balance)}
                 </p>
               </div>
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${summary.balance >= 0 ? 'bg-green-200' : 'bg-red-200'}`}>
-                <span className={`text-xl ${summary.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center ml-3 ${summary.balance >= 0 ? 'bg-green-200' : 'bg-red-200'}`}>
+                <span className={`text-lg sm:text-xl ${summary.balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {summary.balance >= 0 ? '✓' : '✗'}
                 </span>
               </div>
@@ -370,24 +376,26 @@ export default function TransactionsPage() {
 
       {/* Transactions Table */}
       <Card className="bg-white border border-gray-300 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-gray-900">
-            Danh sách giao dịch ({filteredTransactions.length})
-            {filters.month !== 'all' && (
-              <span className="text-sm font-normal text-gray-500 ml-2">
-                - {getCurrentMonthLabel()}
-              </span>
-            )}
+        <CardHeader className="pb-3">
+          <CardTitle className="text-gray-900 text-lg">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span>Danh sách giao dịch ({filteredTransactions.length})</span>
+              {filters.month !== 'all' && (
+                <Badge variant="secondary" className="text-xs">
+                  {getCurrentMonthLabel()}
+                </Badge>
+              )}
+            </div>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           {filteredTransactions.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Eye className="w-8 h-8 text-gray-400" />
+            <div className="text-center py-8 sm:py-12">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Không có giao dịch</h3>
-              <p className="text-gray-500">
+              <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">Không có giao dịch</h3>
+              <p className="text-gray-500 text-sm sm:text-base">
                 {filters.month !== 'all' 
                   ? `Không có giao dịch nào trong ${getCurrentMonthLabel()}`
                   : 'Hãy thêm giao dịch đầu tiên của bạn'
@@ -395,84 +403,37 @@ export default function TransactionsPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto bg-white rounded-lg">
-              <Table className="border-0">
-                <TableHeader>
-                  <TableRow className="bg-gray-200 border-gray-300">
-                    <TableHead className="text-gray-800">Ngày</TableHead>
-                    <TableHead className="text-gray-800">Mô tả</TableHead>
-                    <TableHead className="text-gray-800">Danh mục</TableHead>
-                    <TableHead className="text-gray-800">Loại</TableHead>
-                    <TableHead className="text-gray-800 text-right">Số tiền</TableHead>
-                    <TableHead className="text-gray-800 text-center">Thao tác</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredTransactions.map((transaction) => (
-                    <TableRow 
-                      key={transaction._id} 
-                      className={`transition-colors border-gray-300 ${getRowBackgroundColor(transaction.type)}`}
-                    >
-                      <TableCell className="text-gray-900">
-                        {formatDate(transaction.date)}
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <div>
-                          <p className="font-medium text-gray-900 truncate">
-                            {transaction.description}
-                          </p>
-                          {transaction.notes && (
-                            <p className="text-sm text-gray-600 truncate">
-                              {transaction.notes}
-                            </p>
-                          )}
+            <>
+              {/* Mobile Card View */}
+              <div className="block sm:hidden space-y-3">
+                {filteredTransactions.map((transaction) => (
+                  <Card key={transaction._id} className={cn("border-l-4", getRowClass(transaction))}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Badge variant={transaction.type === 'income' ? 'default' : 'destructive'} className="text-xs">
+                            {transaction.type === 'income' ? 'Thu' : 'Chi'}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {transaction.category}
+                          </Badge>
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary" className="bg-gray-200 text-gray-800">
-                          {transaction.category}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge 
-                          variant={transaction.type === 'income' ? 'default' : 'destructive'}
-                          className={transaction.type === 'income' 
-                            ? 'bg-green-200 text-green-800' 
-                            : 'bg-red-200 text-red-800'
-                          }
-                        >
-                          {transaction.type === 'income' ? 'Thu' : 'Chi'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <span className={`font-semibold ${transaction.type === 'income' ? 'text-green-700' : 'text-red-700'}`}>
-                          {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center gap-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => {
-                              setSelectedTransaction(transaction)
-                              setShowTransactionDetails(true)
-                            }}
-                            className="text-blue-600 hover:text-blue-700"
+                            onClick={() => handleViewTransaction(transaction)}
+                            className="h-8 w-8 p-0"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-3 h-3" />
                           </Button>
                           <TransactionForm
                             mode="edit"
                             transaction={transaction}
                             onSuccess={handleTransactionSuccess}
                             trigger={
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-yellow-600 hover:text-yellow-700"
-                              >
-                                <Edit className="w-4 h-4" />
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                <Edit className="w-3 h-3" />
                               </Button>
                             }
                           />
@@ -480,17 +441,118 @@ export default function TransactionsPage() {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteTransaction(transaction._id)}
-                            className="text-red-600 hover:text-red-700"
+                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
-                      </TableCell>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-gray-900 text-sm">{transaction.description}</p>
+                        <p className="text-xs text-gray-500">{formatDate(transaction.date)}</p>
+                        <p className={cn(
+                          "text-lg font-bold",
+                          transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
+                        )}>
+                          {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden sm:block overflow-x-auto">
+                <Table className="border-0">
+                  <TableHeader>
+                    <TableRow className="border-gray-200">
+                      <TableHead className="text-gray-700 font-semibold">Ngày</TableHead>
+                      <TableHead className="text-gray-700 font-semibold">Mô tả</TableHead>
+                      <TableHead className="text-gray-700 font-semibold">Danh mục</TableHead>
+                      <TableHead className="text-gray-700 font-semibold">Loại</TableHead>
+                      <TableHead className="text-gray-700 font-semibold text-right">Số tiền</TableHead>
+                      <TableHead className="text-gray-700 font-semibold text-center w-32">Thao tác</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredTransactions.map((transaction) => (
+                      <TableRow 
+                        key={transaction._id} 
+                        className={cn("border-gray-200 hover:bg-gray-50 transition-colors", getRowClass(transaction))}
+                      >
+                        <TableCell className="text-gray-900">
+                          {formatDate(transaction.date)}
+                        </TableCell>
+                        <TableCell className="text-gray-900 max-w-[200px]">
+                          <div className="truncate" title={transaction.description}>
+                            {transaction.description}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-xs">
+                            {transaction.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge 
+                            variant={transaction.type === 'income' ? 'default' : 'destructive'}
+                            className={transaction.type === 'income' 
+                              ? 'bg-green-100 text-green-700' 
+                              : 'bg-red-100 text-red-700'
+                            }
+                          >
+                            {transaction.type === 'income' ? 'Thu' : 'Chi'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className={`font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                            {transaction.type === 'income' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewTransaction(transaction)}
+                              className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700"
+                              title="Xem chi tiết"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <TransactionForm
+                              mode="edit"
+                              transaction={transaction}
+                              onSuccess={handleTransactionSuccess}
+                              trigger={
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0 text-yellow-600 hover:text-yellow-700"
+                                  title="Chỉnh sửa"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </Button>
+                              }
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteTransaction(transaction._id)}
+                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
+                              title="Xóa"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

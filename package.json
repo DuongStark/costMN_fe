@@ -1,7 +1,8 @@
 {
-  "name": "shadcn_base",
+  "name": "costmn-frontend",
+  "description": "CostMN - Ứng dụng quản lý chi tiêu cá nhân thông minh",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

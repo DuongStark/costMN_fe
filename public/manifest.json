@@ -1,0 +1,25 @@
+{
+  "name": "CostMN - Quản Lý Chi Tiêu Thông Minh",
+  "short_name": "CostMN",
+  "description": "Ứng dụng quản lý chi tiêu cá nhân và ngân sách thông minh",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-16x16.svg",
+      "sizes": "16x16",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["finance", "productivity", "business"],
+  "lang": "vi"
+}

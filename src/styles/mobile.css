@@ -1,0 +1,85 @@
+/* Mobile responsive fixes */
+
+/* Ensure proper mobile viewport */
+@media (max-width: 640px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Dialog responsive fixes */
+  [data-radix-dialog-content] {
+    max-width: 95vw !important;
+    max-height: 85vh !important;
+    margin: auto;
+  }
+
+  /* Table responsive */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Card responsive */
+  .card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Button responsive */
+  .btn-responsive {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Form responsive */
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Tablet responsive */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .card-grid-tablet {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 69, 197, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 69, 197, 0.5);
+}
+
+/* Touch targets */
+@media (hover: none) and (pointer: coarse) {
+  button, 
+  [role="button"],
+  .clickable {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

@@ -153,33 +153,33 @@ export function TransactionForm({ mode = 'add', transaction, onSuccess, trigger 
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-white border-2 border-gray-200">
+      <DialogContent className="sm:max-w-[425px] max-w-[95vw] bg-white border-2 border-gray-200">
         <DialogHeader className="border-b border-gray-200 pb-4">
-          <DialogTitle className="text-gray-900">
+          <DialogTitle className="text-gray-900 text-lg">
             {mode === 'add' ? 'Thêm giao dịch mới' : 'Chỉnh sửa giao dịch'}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4 max-h-[80vh] overflow-y-auto">
           {/* Date */}
           <div className="space-y-2">
-            <Label htmlFor="date" className="text-gray-900">Ngày</Label>
+            <Label htmlFor="date" className="text-gray-900 text-sm font-medium">Ngày</Label>
             <Input
               id="date"
               type="date"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               required
-              className="bg-white border-gray-300"
+              className="bg-white border-gray-300 h-10"
             />
           </div>
 
           {/* Type */}
           <div className="space-y-2">
-            <Label className="text-gray-900">Loại giao dịch</Label>
+            <Label className="text-gray-900 text-sm font-medium">Loại giao dịch</Label>
             <RadioGroup
               value={formData.type}
               onValueChange={(value) => setFormData({ ...formData, type: value as 'income' | 'expense' })}
-              className="flex space-x-4"
+              className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="expense" id="expense" />
@@ -194,9 +194,9 @@ export function TransactionForm({ mode = 'add', transaction, onSuccess, trigger 
 
           {/* Category */}
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-gray-900">Danh mục</Label>
+            <Label htmlFor="category" className="text-gray-900 text-sm font-medium">Danh mục</Label>
             <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
-              <SelectTrigger className="bg-white border-gray-300">
+              <SelectTrigger className="bg-white border-gray-300 h-10">
                 <SelectValue placeholder="Chọn danh mục" />
               </SelectTrigger>
               <SelectContent className="bg-white border-gray-200">
@@ -211,7 +211,7 @@ export function TransactionForm({ mode = 'add', transaction, onSuccess, trigger 
 
           {/* Amount */}
           <div className="space-y-2">
-            <Label htmlFor="amount" className="text-gray-900">Số tiền (VND)</Label>
+            <Label htmlFor="amount" className="text-gray-900 text-sm font-medium">Số tiền (VND)</Label>
             <Input
               id="amount"
               type="number"
@@ -219,49 +219,49 @@ export function TransactionForm({ mode = 'add', transaction, onSuccess, trigger 
               value={formData.amount}
               onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
               required
-              className="bg-white border-gray-300"
+              className="bg-white border-gray-300 h-10"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-900">Mô tả</Label>
+            <Label htmlFor="description" className="text-gray-900 text-sm font-medium">Mô tả</Label>
             <Input
               id="description"
               placeholder="Mô tả giao dịch"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               required
-              className="bg-white border-gray-300"
+              className="bg-white border-gray-300 h-10"
             />
           </div>
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label htmlFor="notes" className="text-gray-900">Ghi chú (tùy chọn)</Label>
+            <Label htmlFor="notes" className="text-gray-900 text-sm font-medium">Ghi chú (tùy chọn)</Label>
             <Textarea
               id="notes"
               placeholder="Ghi chú thêm..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="bg-white border-gray-300"
+              className="bg-white border-gray-300 min-h-[80px]"
             />
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => setOpen(false)}
-              className="border-gray-300"
+              className="border-gray-300 h-10"
             >
               Hủy
             </Button>
             <Button 
               type="submit" 
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white h-10"
             >
               {loading ? (
                 <>
