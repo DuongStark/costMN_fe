@@ -86,7 +86,7 @@ export function AITransactionForm({ onSuccess, trigger }: AITransactionFormProps
 
     setLoading(true)
     try {
-      const data = await api.analyzeTransaction(text, imageFile)
+      const data = await api.analyzeTransaction(text, imageFile || undefined)
       
       if (data.success && data.transactions) {
         // Logic xử lý ngày tháng cho AI transactions

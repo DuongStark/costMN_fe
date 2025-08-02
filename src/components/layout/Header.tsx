@@ -8,6 +8,7 @@ import { LogOut, User, Settings, Menu } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
 interface BreadcrumbItem {
   label: string
@@ -60,30 +61,55 @@ export function BreadcrumbHeader({ onMenuToggle }: BreadcrumbHeaderProps) {
   const breadcrumbs = generateBreadcrumbs(location.pathname)
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-gradient-to-r from-rose-50 via-pink-50 via-purple-50 to-blue-50 border-b-2 border-purple-200 shadow-lg backdrop-blur-sm">
-      <div className="flex items-center gap-2 px-4">
-        {/* Mobile Menu Button */}
+    <header className={cn(
+      "flex shrink-0 items-center gap-2 transition-[width,height] ease-linear bg-gradient-to-r from-rose-50 via-pink-50 via-purple-50 to-blue-50 border-b-2 border-purple-200 shadow-lg backdrop-blur-sm",
+      // Mobile optimizations with safe area
+      isMobile ? "h-14 px-3" : "h-16 px-4",
+      // Safe area support for iPhone X+
+      isMobile && "pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))]",
+      // Adjust height for safe area
+      isMobile && "h-[max(3.5rem,calc(3.5rem+env(safe-area-inset-top)))]"
+    )}>
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        {/* Mobile Menu Button - Enhanced with safe area */}
         {isMobile && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onMenuToggle}
-            className="lg:hidden p-2 hover:bg-gradient-to-br hover:from-pink-100 hover:to-purple-100"
+            className={cn(
+              "lg:hidden hover:bg-gradient-to-br hover:from-pink-100 hover:to-purple-100 rounded-lg",
+              "min-h-[44px] min-w-[44px] p-2" // iOS recommended touch target 44px
+            )}
           >
             <Menu className="h-5 w-5 text-purple-600" />
           </Button>
         )}
         
-        <Breadcrumb>
-          <BreadcrumbList>
+        {/* Breadcrumb - Mobile optimized */}
+        <Breadcrumb className="flex-1 min-w-0">
+          <BreadcrumbList className={cn(
+            isMobile && "text-sm" // Smaller text on mobile
+          )}>
             {breadcrumbs.map((item, index) => (
               <Fragment key={item.path}>
-                <BreadcrumbItem>
+                <BreadcrumbItem className="min-w-0">
                   {index === breadcrumbs.length - 1 ? (
-                    <BreadcrumbPage className="text-purple-800 font-semibold">{item.label}</BreadcrumbPage>
+                    <BreadcrumbPage className={cn(
+                      "text-purple-800 font-semibold truncate",
+                      isMobile && "text-sm max-w-[120px]" // Limit width on mobile
+                    )}>{item.label}</BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink asChild>
-                      <Link to={item.path} className="text-purple-600 hover:text-purple-800 transition-colors font-medium">{item.label}</Link>
+                      <Link 
+                        to={item.path} 
+                        className={cn(
+                          "text-purple-600 hover:text-purple-800 transition-colors font-medium truncate",
+                          isMobile && "text-sm max-w-[80px]" // Limit width on mobile
+                        )}
+                      >
+                        {item.label}
+                      </Link>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>
@@ -93,24 +119,41 @@ export function BreadcrumbHeader({ onMenuToggle }: BreadcrumbHeaderProps) {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="ml-auto flex items-center gap-2 px-4">
-        {/* User Menu */}
+      
+      <div className="flex items-center gap-2">
+        {/* User Menu - Mobile optimized */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full hover:bg-gradient-to-br hover:from-pink-100 hover:to-purple-100">
-              <Avatar className="h-8 w-8">
+            <Button 
+              variant="ghost" 
+              className={cn(
+                "relative rounded-full hover:bg-gradient-to-br hover:from-pink-100 hover:to-purple-100",
+                isMobile ? "h-8 w-8 p-0 min-h-[44px] min-w-[44px]" : "h-8 w-8" // iOS touch target
+              )}
+            >
+              <Avatar className={cn(isMobile ? "h-7 w-7" : "h-8 w-8")}>
                 <AvatarImage src={user?.avatar} alt={user?.fullName} />
-                <AvatarFallback className="bg-gradient-to-br from-pink-200 to-purple-200 text-purple-800 border-2 border-purple-300 font-semibold">
+                <AvatarFallback className="bg-gradient-to-br from-pink-200 to-purple-200 text-purple-800 border-2 border-purple-300 font-semibold text-sm">
                   {user?.fullName?.charAt(0)?.toUpperCase() || user?.username?.charAt(0)?.toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-gradient-to-br from-pink-50 to-purple-50 border-2 border-purple-200 shadow-xl" align="end" forceMount>
+          <DropdownMenuContent 
+            className="w-56 bg-gradient-to-br from-pink-50 to-purple-50 border-2 border-purple-200 shadow-xl" 
+            align="end" 
+            forceMount
+          >
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-semibold leading-none text-purple-800">{user?.fullName}</p>
-                <p className="text-xs leading-none text-purple-600">
+                <p className={cn(
+                  "font-semibold leading-none text-purple-800",
+                  isMobile ? "text-sm" : "text-sm"
+                )}>{user?.fullName}</p>
+                <p className={cn(
+                  "leading-none text-purple-600",
+                  isMobile ? "text-xs" : "text-xs"
+                )}>
                   {user?.email}
                 </p>
               </div>
