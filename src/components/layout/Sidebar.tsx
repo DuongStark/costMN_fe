@@ -102,7 +102,7 @@ export function AdminSidebar({ isOpen, onToggle, isCollapsed = false, onSetColla
         {/* Mobile Overlay */}
         {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden will-change-transform"
             onClick={onToggle}
           />
         )}
@@ -110,6 +110,7 @@ export function AdminSidebar({ isOpen, onToggle, isCollapsed = false, onSetColla
         {/* Mobile Sidebar */}
         <div className={cn(
           "fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-pink-50 to-rose-50 border-r border-pink-200 shadow-xl z-50 transform transition-transform duration-300 ease-in-out md:hidden",
+          "will-change-transform touch-none backface-hidden",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}>
           <div className="flex items-center justify-between p-4 border-b border-pink-200">

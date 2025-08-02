@@ -27,12 +27,32 @@ export function AdminLayout() {
     }
   }, [isMobile, isTablet])
 
+  // Fix iOS sidebar overflow issue
+  useEffect(() => {
+    if (isMobile) {
+      if (sidebarOpen) {
+        document.body.style.overflowX = 'hidden'
+        // Prevent body scroll when sidebar is open
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflowX = ''
+        document.body.style.overflow = ''
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflowX = ''
+      document.body.style.overflow = ''
+    }
+  }, [sidebarOpen, isMobile])
+
   const toggleSidebar = useCallback(() => {
     setSidebarOpen(prev => !prev)
   }, [])
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-blue-50">
+    <div className="flex h-screen overflow-x-hidden bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-blue-50">
       <AdminSidebar 
         isOpen={sidebarOpen} 
         onToggle={toggleSidebar}
@@ -41,7 +61,7 @@ export function AdminLayout() {
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <BreadcrumbHeader onMenuToggle={toggleSidebar} />
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-blue-50 p-3 sm:p-4 lg:p-6">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gradient-to-br from-rose-50 via-pink-50 via-purple-50 to-blue-50 p-3 sm:p-4 lg:p-6">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>
