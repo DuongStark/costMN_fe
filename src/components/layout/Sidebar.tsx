@@ -100,18 +100,19 @@ export function AdminSidebar({ isOpen, onToggle, isCollapsed = false, onSetColla
     return (
       <>
         {/* Mobile Overlay */}
-        {isOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden will-change-transform"
-            onClick={onToggle}
-          />
-        )}
+        <div 
+          className={cn(
+            "fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300 ease-in-out",
+            isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          )}
+          onClick={onToggle}
+        />
         
         {/* Mobile Sidebar */}
         <div className={cn(
-          "fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-pink-50 to-rose-50 border-r border-pink-200 shadow-xl z-50 transform transition-transform duration-300 ease-in-out md:hidden",
+          "fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-pink-50 to-rose-50 border-r border-pink-200 shadow-xl z-50 transform transition-all duration-300 ease-in-out md:hidden",
           "will-change-transform touch-none backface-hidden",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
         )}>
           <div className="flex items-center justify-between p-4 border-b border-pink-200">
             <h2 className="text-lg font-bold text-pink-900">Chi Tiêu MN</h2>
